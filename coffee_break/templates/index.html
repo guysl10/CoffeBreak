@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Starbucks locator</title>
+</head>
+<body style="background-color: burlywood;">
+<center>
+<style>
+input[type=text] {
+  transition: width 0.5s ease-in-out;
+}
+.p1{
+	font-family: Monospace, Helvetica, sans-serif;;
+	font-size: xx-large;
+}
+
+input[type=text]:focus {
+  width: 20%;
+}
+.select
+  position: relative
+  min-width: 200px
+
+  svg
+    position: absolute
+    right: 12px
+    top: calc(50% - 3px)
+    width: 10px
+    height: 6px
+    stroke-width: 2px
+    stroke: #9098A9
+    fill: none
+    stroke-linecap: round
+    stroke-linejoin: round
+    pointer-events: none
+
+  select
+    -webkit-appearance: none
+    padding: 7px 40px 7px 12px
+    width: 100%
+    border: 1px solid #E8EAED
+    border-radius: 5px
+    background: white
+    box-shadow: 0 1px 3px -2px #9098A9
+    cursor: pointer
+    font-family: inherit
+    font-size: 16px
+    transition: all 150ms ease
+    &:required:invalid
+      color: #5A667F
+
+    option
+      color: #223254
+      &[value=""][disabled]
+          display: none
+
+    &:focus
+      outline: none
+      border-color: #0077FF
+      box-shadow: 0 0 0 2px rgba(#0077FF,.2)
+
+    &:hover + svg
+      stroke: #0077FF
+
+.sprites
+  position: absolute
+  width: 0
+  height: 0
+  pointer-events: none
+  user-select: none
+
+.button_submit {
+  background-color: white;
+  color: black;
+  border: 2px solid #e7e7e7;
+}
+</style>
+<!--<p class="p1">-->
+<img src="starbucks_symbol.jpg" alt="Starbucks" style="width:128px;height:128px;"><br>
+    <input type="text" id="search_address" placeholder="Address">
+    <input type="text" id="search_radius" placeholder="Radius">
+    <label class="select" for="address_type">
+        <select id="address_type" required="required" >
+            <option value="" disabled="disabled" selected="selected">Select option</option>
+            <option value="full_address">Full Address</option>
+            <option value="coordinates">Coordinates</option>
+        </select>
+    </label>
+        <button class="button button_submit" onclick="get_starbucks_around(search_address.value, search_radius.value, address_type.value)">Submit</button>
+    <br>
+    <script>
+        function get_starbucks_around(address, radius, address_type) {
+            var request = new XMLHttpRequest()
+            if(address && radius && address_type){
+                request.open("GET", "/get_starbucks_around?address_type="+ address_type + "&address=" + address + "&radius=" + radius, true)
+                request.send()
+                request.onreadystatechange = function () {
+                    if (request.readyState === 4) {
+                        if(request.status == 200){
+                            console.log(request.responseText)
+                            document.getElementById("ServerAnswer").innerHTML = JSON.stringify(request.responseText, undefined, 2)
+                        }
+                        else
+                            document.getElementById("ServerAnswer").innerHTML = "No Result"
+                    }};
+            }
+        }
+    </script>
+
+    # For using coordination search write it like this: $latitude, $longitude <br>
+    # For example: 32, 45<br><br>
+    <table id="table" align = "center" border="1px"></table>
+
+
+    <!--</p>-->
+</center>
+<pre id="ServerAnswer"></pre>
+</body>
+</html>
